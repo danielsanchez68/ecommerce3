@@ -1,12 +1,9 @@
-//import ModelMem from '../model/DAOs/productosMem.js'
-//import ModelFile from '../model/DAOs/productosFile.js'
-
 import config from '../config.js'
 import ModelFactory from '../model/DAOs/productos/productosFactory.js'
+import { validar } from './validaciones/producto.js'
 
 class Servicio {
     constructor() {
-        //this.model = config.MODO_PERSISTENCIA == 'FILE'? new ModelFile() : new ModelMem()
         this.model = ModelFactory.get(config.MODO_PERSISTENCIA)
     }
 
@@ -22,8 +19,16 @@ class Servicio {
     }
 
     guardarProducto = async producto => {
-        const productoGuardado = await this.model.guardarProducto(producto)
-        return productoGuardado
+        // validación específica
+        const res = validar(producto)
+        if(res.result) {
+            const productoGuardado = await this.model.guardarProducto(producto)
+            return productoGuardado
+        }
+        else {
+            //console.log(res.error)
+            throw new Error(res.error.details[0].message)
+        }
     }
 
     actualizarProducto = async (id, producto) => {

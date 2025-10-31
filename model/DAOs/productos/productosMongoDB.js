@@ -31,10 +31,17 @@ class ModelMongoDB {
     actualizarProducto = async (id,producto) => {
         if(!CnxMongoDB.connectionOK) throw new Error('DAO sin conexión a MongoDB')
 
-        await CnxMongoDB.db.collection('productos').updateOne(
-            {_id: ObjectId.createFromHexString(id)},
-            { $set: producto}
-        )
+        //console.log(producto)            
+
+        //try {
+            await CnxMongoDB.db.collection('productos').updateOne(
+                {_id: ObjectId.createFromHexString(id)},
+                { $set: producto}
+            )
+        /* }
+        catch(error) {
+            console.log(error.message)
+        } */
 
         const productoActualizado = await this.obtenerProducto(id)
         return productoActualizado
